@@ -16,28 +16,91 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Send, Smile, Settings } from "lucide-react";
 
+const mockData = {
+  Nom: "CALANDRE",
+  Famille: null,
+  Type: "CALANDRE BUANDERIE",
+  "ID Équipement": "2F 120",
+  "Référence constructeur": null,
+  "Date d'installation": null,
+  Notes: null,
+  Secteur: "HDCER",
+  Bâtiment: "Bâtiment Astoria",
+  Adresse: "1 Chemin de la Liberté, 72527 Bordeaux",
+  Niveau: null,
+  Salle: null,
+  "Cage d'escalier": null,
+  "Opérationnel/HS": "Opérationnel",
+  Validation: "Validé",
+};
+
+interface Equipment {
+  Nom: string;
+  Famille: string | null;
+  Type: string;
+  "ID Équipement": string;
+  "Référence constructeur": string | null;
+  "Date d'installation": string | null;
+  Notes: string | null;
+  Secteur: string;
+  Bâtiment: string;
+  Adresse: string;
+  Niveau: string | null;
+  Salle: string | null;
+  "Cage d'escalier": string | null;
+  "Opérationnel/HS": string;
+  Validation: string;
+}
+
+const EquipmentCard = ({ equipment }: { equipment: Equipment }) => {
+  return (
+    <div>
+      <h2 className="text-xl font-bold mb-2">{equipment.Nom}</h2>
+      <p>
+        <strong>Type:</strong> {equipment.Type}
+      </p>
+      <p>
+        <strong>ID Équipement:</strong> {equipment["ID Équipement"]}
+      </p>
+      <p>
+        <strong>Secteur:</strong> {equipment.Secteur}
+      </p>
+      <p>
+        <strong>Bâtiment:</strong> {equipment.Bâtiment}
+      </p>
+      <p>
+        <strong>Adresse:</strong> {equipment.Adresse}
+      </p>
+      <p>
+        <strong>Statut:</strong> {equipment["Opérationnel/HS"]}
+      </p>
+      <p>
+        <strong>Validation:</strong> {equipment.Validation}
+      </p>
+    </div>
+  );
+};
+
+const EquipmentList = () => {
+  return (
+    <div className="p-6 mx-10">
+      <h1 className="text-2xl font-bold mb-4">Fiches Techniques</h1>
+      <EquipmentCard equipment={mockData} />
+    </div>
+  );
+};
+
 const Chat = () => {
-  const [messages, setMessages] = useState([
-    {
-      text: "Bonjour ! Comment puis-je vous aider aujourd'hui ?",
-      isUser: false,
-    },
-    {
-      text: "Salut ! J'ai une question concernant votre service.",
-      isUser: true,
-    },
-  ]);
+  const [messages, setMessages] = useState([] as Message[]);
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const handleSendMessage = () => {
     if (inputValue.trim() === "") return;
 
-    // Add user message
     setMessages([...messages, { text: inputValue, isUser: true }]);
     setInputValue("");
 
-    // Simulate bot response
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
@@ -55,7 +118,6 @@ const Chat = () => {
     }
   };
 
-  // Auto-scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -67,7 +129,7 @@ const Chat = () => {
           <CardHeader className="px-4 pb-0 pt-2">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="chat">Chat</TabsTrigger>
-              <TabsTrigger value="settings">Paramètres</TabsTrigger>
+              <TabsTrigger value="settings">Equipement</TabsTrigger>
             </TabsList>
           </CardHeader>
 
@@ -89,7 +151,7 @@ const Chat = () => {
             value="settings"
             className="flex-1 data-[state=inactive]:hidden"
           >
-            <SettingsTab />
+            <EquipmentList />
           </TabsContent>
         </Tabs>
       </Card>
@@ -121,24 +183,39 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 }) => {
   return (
     <>
-      {/* Chat header */}
       <div className="px-4 py-2 border-b">
         <CardTitle className="text-lg">Assistant virtuel</CardTitle>
         <CardDescription>Disponible 24/7 pour vous aider</CardDescription>
       </div>
 
-      {/* Messages area */}
-      <ScrollArea className="flex-1 p-4">
-        <div className="space-y-4">
+      <ScrollArea
+        className="flex-1 px-8 py-6"
+        style={{
+          marginRight: "2rem",
+          marginLeft: "2rem",
+          marginTop: "5rem",
+          padding: "0.5rem",
+        }}
+      >
+        {" "}
+        <div className="space-y-4 flex flex-col items-center">
+          {" "}
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`flex ${
+              className={`flex w-full max-w-2xl ${
                 message.isUser ? "justify-end" : "justify-start"
-              } gap-2`}
+              } gap-3`}
             >
               {!message.isUser && (
-                <Avatar className="h-8 w-8 bg-primary">
+                <Avatar
+                  className="h-8 w-8 bg-primary flex text-center flex-shrink-0"
+                  style={{
+                    marginRight: "2rem",
+                    marginLeft: "2rem",
+                    padding: "0.5rem",
+                  }}
+                >
                   <div className="text-xs font-medium text-primary-foreground">
                     AI
                   </div>
@@ -146,17 +223,29 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               )}
 
               <div
-                className={`px-4 py-2 rounded-lg max-w-xs md:max-w-md lg:max-w-lg break-words ${
+                className={`px-6 py-3 rounded-lg text-base max-w-[85%] md:max-w-[65%] lg:max-w-[50%] break-words ${
                   message.isUser
                     ? "bg-primary text-primary-foreground rounded-br-none"
                     : "bg-muted text-muted-foreground rounded-bl-none"
                 }`}
+                style={{
+                  marginRight: "2rem",
+                  marginLeft: "2rem",
+                  padding: "0.5rem",
+                }}
               >
                 {message.text}
               </div>
 
               {message.isUser && (
-                <Avatar className="h-8 w-8 bg-secondary">
+                <Avatar
+                  className="h-8 w-8 bg-secondary flex flex-shrink-0"
+                  style={{
+                    marginRight: "2rem",
+                    marginLeft: "2rem",
+                    padding: "0.5rem",
+                  }}
+                >
                   <div className="text-xs font-medium text-secondary-foreground">
                     You
                   </div>
@@ -168,11 +257,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         </div>
       </ScrollArea>
 
-      {/* Input area */}
-      <div className="p-4 border-t">
-        <div className="flex items-center gap-2">
-          <Button size="icon" variant="ghost" className="rounded-full">
-            <Smile className="h-5 w-5" />
+      <div className="p-4 border-t bg-white">
+        <div className="flex items-center gap-3 w-full">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="rounded-full h-12 w-12 flex items-center justify-center"
+          >
+            <Smile className="h-6 w-6 text-black" />
           </Button>
 
           <Input
@@ -181,73 +273,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
-            className="flex-1"
+            className="flex-1 h-12 px-5 py-3 text-black rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            style={{ marginRight: "2rem", marginLeft: "2rem", height: "2rem" }}
           />
 
           <Button
             size="icon"
             onClick={handleSendMessage}
-            className="rounded-full"
+            className="rounded-full h-12 w-12 flex items-center justify-center"
           >
-            <Send className="h-5 w-5" />
+            <Send className="h-6 w-6" />
           </Button>
         </div>
       </div>
     </>
-  );
-};
-
-const SettingsTab = () => {
-  return (
-    <CardContent className="p-6">
-      <div className="space-y-6">
-        <div className="flex flex-col items-center justify-center space-y-3 pb-6">
-          <Settings className="h-12 w-12 text-muted-foreground" />
-          <h2 className="text-xl font-semibold">Paramètres du chatbot</h2>
-          <p className="text-center text-muted-foreground">
-            Personnalisez l'expérience du chat selon vos préférences
-          </p>
-        </div>
-
-        <Separator />
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="dark-mode">Mode sombre</Label>
-              <p className="text-sm text-muted-foreground">
-                Activer le thème sombre pour réduire la fatigue oculaire
-              </p>
-            </div>
-            <Switch id="dark-mode" />
-          </div>
-
-          <Separator />
-
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="notifications">Notifications</Label>
-              <p className="text-sm text-muted-foreground">
-                Recevoir des notifications pour les nouveaux messages
-              </p>
-            </div>
-            <Switch id="notifications" defaultChecked />
-          </div>
-
-          <Separator />
-
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="sounds">Sons</Label>
-              <p className="text-sm text-muted-foreground">
-                Activer les sons pour les notifications
-              </p>
-            </div>
-            <Switch id="sounds" />
-          </div>
-        </div>
-      </div>
-    </CardContent>
   );
 };
 

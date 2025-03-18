@@ -121,3 +121,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.app {
+  padding: 20px;
+}

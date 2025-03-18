@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Chat from "./pages/Chat";
-import TechFile from "./pages/TechFile";
 import "./styles/global.css";
 
 function App() {
@@ -11,7 +10,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/chat" element={<Chat />} />
-          <Route path="/file" element={<TechFile />} />
         </Routes>
       </div>
     </Router>

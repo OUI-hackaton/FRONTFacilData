@@ -4,17 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Card,
-  CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { Send, Smile, Settings } from "lucide-react";
+import { Send, Smile } from "lucide-react";
 
 const mockData = {
   Nom: "CALANDRE",
@@ -33,6 +29,27 @@ const mockData = {
   "Opérationnel/HS": "Opérationnel",
   Validation: "Validé",
 };
+
+interface Message {
+  text: string;
+  isUser: boolean;
+}
+
+interface Message {
+  text: string;
+  isUser: boolean;
+}
+
+const mockedMessages = [
+  {
+    text: "Quand a eu lieu la dernière intervention sur cette machine ?",
+    isUser: true,
+  },
+  {
+    text: "La dernière intervention sur cette presse hydraulique a eu lieu le 12 février 2025. Lors de cette opération, l'équipe de maintenance a procédé à un contrôle approfondi du circuit hydraulique, notamment en vérifiant l'état des vérins et des joints d'étanchéité. Une anomalie mineure a été détectée sur le joint d'étanchéité du vérin principal, qui présentait un début d'usure. Ce joint a été remplacé pour garantir une pression optimale lors des cycles de presse. De plus, les capteurs de pression et les valves de régulation ont été recalibrés pour assurer une précision optimale. Enfin, une vidange complète de l’huile hydraulique a été effectuée et remplacée par une huile haute performance adaptée aux conditions de travail intensives.",
+    isUser: false,
+  },
+];
 
 interface Equipment {
   Nom: string;
@@ -91,7 +108,7 @@ const EquipmentList = () => {
 };
 
 const Chat = () => {
-  const [messages, setMessages] = useState([] as Message[]);
+  const [messages, setMessages] = useState<Message[]>(mockedMessages);
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -206,14 +223,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               className={`flex w-full max-w-2xl ${
                 message.isUser ? "justify-end" : "justify-start"
               } gap-3`}
+              style={{ marginBottom: "2rem" }}
             >
               {!message.isUser && (
                 <Avatar
-                  className="h-8 w-8 bg-primary flex text-center flex-shrink-0"
+                  className="bg-primary flex text-center flex-shrink-0"
                   style={{
                     marginRight: "2rem",
                     marginLeft: "2rem",
                     padding: "0.5rem",
+                    width: "1rem",
+                    height: "1rem",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
                   <div className="text-xs font-medium text-primary-foreground">
@@ -239,7 +261,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
               {message.isUser && (
                 <Avatar
-                  className="h-8 w-8 bg-secondary flex flex-shrink-0"
+                  className="bg-secondary flex flex-shrink-0"
                   style={{
                     marginRight: "2rem",
                     marginLeft: "2rem",
